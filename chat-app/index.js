@@ -2,9 +2,44 @@
 var http = require('http');
 var fs = require('fs');
 
-var server = http.createServer((req,res)=>{
-    console.log('Someon connected via http');
-})
+//include socket.io which was installed by npm.  It is not a part of core.
+
+var socketio = require('socket.io');
+
+var server = http.createServer(function(req,res){
+    console.log('Someone connected via http');
+    fs.readFile('index.html', 'utf-8',function(error,data){
+       //console.log(error);
+       //console.log(data);
+       if(error){
+           res.writeHead(500,{'content-type': 'text-html'});
+           res.end(error);
+       }else{
+           res.writeHead(200,{'content-type': 'text-html'});
+           res.end(data);
+       }
+    });
+
+
+});
+
+var io = socketio.listen(server);
+//handle socket connection
+io.sockets.on('connect', function (socket) {
+    console.log('someone connected via socket.');
+    //console.log(socket);
+
+    socket.on('nameToServer', function (name) {
+        console.log(name + ' just joined');
+        io.sockets.emit('newUser', name);
+
+    });
+
+    socket.on('sendMessage', function () {
+        console.log('someone clicked the button.')
+    });
+
+});
 
 server.listen(8080);
 
