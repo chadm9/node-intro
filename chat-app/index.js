@@ -51,7 +51,8 @@ io.sockets.on('connect', function (socket) {
     });
 
     socket.on('messageToServer', function (message) {
-        io.sockets.emit('messageToClient', message.usermessage + ' --' + message.username);
+        var time = (new Date()).toLocaleString();
+        io.sockets.emit('messageToClient', message.usermessage + ' --' + message.username + ' ' + time);
     });
 
 
