@@ -54,9 +54,14 @@
     socketio.emit('nameToServer', name);
 
     socketio.on('newUser', function (userName) {
-        console.log(userName + ' just joined');
+        console.log(userName[-1] + ' just joined');
         var usersDiv = document.getElementById('users');
-        usersDiv.innerHTML += '<div class="col-sm-12">' + userName + '</div>';
+        usersDiv.innerHTML = '';
+        for(var i = 0; i<userName.length; i++){
+            usersDiv.innerHTML += '<div class="col-sm-12">' + userName[i] + '</div>';
+
+        }
+
     });
 
     $('#submit-message').submit(function (event) {

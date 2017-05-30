@@ -29,12 +29,20 @@ var io = socketio.listen(server);
 //handle socket connection
 io.sockets.on('connect', function (socket) {
     console.log('someone connected via socket.');
-    //console.log(socket);
+    console.log(socket.id);
 
     socket.on('nameToServer', function (name) {
         //console.log(name + ' just joined');
         usersLoggedOn.push(name);
-        io.sockets.emit('newUser', name);
+        io.sockets.emit('newUser', usersLoggedOn);
+
+        socket.on('disconnect', function () {
+            console.log(name + ' disconnected');
+            usersLoggedOn.splice(usersLoggedOn.indexOf(name), 1);
+            io.sockets.emit('newUser', usersLoggedOn);
+
+
+        });
 
     });
 
@@ -46,7 +54,13 @@ io.sockets.on('connect', function (socket) {
         io.sockets.emit('messageToClient', message.usermessage + ' --' + message.username);
     });
 
+
+
 });
+
+// io.sockets.on('disconnect', function () {
+//    console.log('someone disconnected');
+// });
 
 server.listen(8080);
 
