@@ -5,21 +5,39 @@
     <title>Chat App - node and sockets</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <style type="text/css" media="screen">
+        #messages{
+            height: 50vh;
+            border: 1px solid black;
+        }
+    </style>
 
 
 
 </head>
 <body>
-    <h1>Did this load?</h1>
+    <h1>Chat Room</h1>
     <div class="container">
         <div class="row">
-            <div class="col-sm-12" id="users">
+            <div class="col-sm-3" id="users">
+                <h3>Connected users</h3>
+            </div>
+
+            <div id="messages" class="col-sm-6">
 
             </div>
+
             <div class="col-sm-12">
-                <button id='send-message' class="btn btn-primary">
-                    send message to server
-                </button>
+
+                <form id="submit-message">
+                    <input type="text" id="new-message" />
+                    <button type="submit" id='send-message' class="btn btn-primary">
+                        send message to server
+                    </button>
+
+                </form>
+
+
             </div>
         </div>
     </div>
@@ -38,13 +56,24 @@
     socketio.on('newUser', function (userName) {
         console.log(userName + ' just joined');
         var usersDiv = document.getElementById('users');
-        users.innerHTML += '<div class="col-sm-12">' + userName + '</div>';
+        usersDiv.innerHTML += '<div class="col-sm-12">' + userName + '</div>';
+    });
+
+    $('#submit-message').submit(function (event) {
+        event.preventDefault();
+        var newMessage = $('#new-message').val();
+        socketio.emit('messageToServer', {usermessage:newMessage, username:name});
     });
 
 
-    $('#send-message').click(function () {
-        socketio.emit('sendMessage');
+    socketio.on('messageToClient', function (message) {
+        $('#messages').prepend('<p>' + message + '</p>');
     });
+//    $('#send-message').click(function () {
+//        socketio.emit('sendMessage');
+//    });
+
+
 
 
 

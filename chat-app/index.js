@@ -2,6 +2,8 @@
 var http = require('http');
 var fs = require('fs');
 
+var usersLoggedOn = [];
+
 //include socket.io which was installed by npm.  It is not a part of core.
 
 var socketio = require('socket.io');
@@ -30,13 +32,18 @@ io.sockets.on('connect', function (socket) {
     //console.log(socket);
 
     socket.on('nameToServer', function (name) {
-        console.log(name + ' just joined');
+        //console.log(name + ' just joined');
+        usersLoggedOn.push(name);
         io.sockets.emit('newUser', name);
 
     });
 
     socket.on('sendMessage', function () {
         console.log('someone clicked the button.')
+    });
+
+    socket.on('messageToServer', function (message) {
+        io.sockets.emit('messageToClient', message.usermessage + ' --' + message.username);
     });
 
 });
